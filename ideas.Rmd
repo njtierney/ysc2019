@@ -1,0 +1,27 @@
+---
+title: "talk ideas"
+author: "Nicholas Tierney"
+date: "16/09/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Big ideas of the talk
+
+1. Think of longitudinal data as a time series
+2. Identifying interesting observations means reducing a line down to a point
+    - Show animation of the data changing from lines to points
+    - Filter out the points based on some condition (like top 5, or summary 5) - other points fade out
+    - points grow back to lines to represent those "interesting" observations.
+3. 
+
+Other fun ideas
+
+1. Can I use a blue / red filter on the lines of the data to "make it pop" (like this? https://github.com/coolbutuseless/ggthreed)
+
+  - The ideas here is that you are using a lens to filter things down
+  - 
+  

@@ -1,0 +1,152 @@
+---
+title: "Making better spaghetti (plots)"
+subtitle: "Exploring the individuals in longitudinal data with the brolgar package"  
+author: "<span style = 'font-size: 90%;'>Nicholas Tierney, Monash University</span>"
+date: "<span style = 'font-size: 90%;'>YSC, Canerra <br><br> Tuesday 2nd October, 2019 </span><br><br> `r icon::fa('link')` [bit.ly/ysc-njt](https://bit.ly/ysc-njt)<br><br>`r icon::fa('twitter')` [nj_tierney](https://twitter.com/nj_tierney)"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: [njtheme.css, extra.css]
+    nature:
+      ratio: "16:9"
+      titleSlideClass: ["left", "middle", "inverse"]
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+layout: true
+<div class="my-footer"><span>bit.ly/ysc-njt • @nj_tierney</span></div> 
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+# NOTE TO SELF: The CSS styles were created in `create-njt-theme.R`
+library(brolgar)
+library(tidyverse)
+library(visdat)
+library(naniar)
+library(gganimate)
+
+knitr::opts_chunk$set(
+  fig.width = 8,
+  fig.height = 4,
+  fig.retina = 3,
+  fig.align = "center",
+  out.width = "90%",
+  message = FALSE,
+  warning = FALSE,
+  cache = TRUE,
+  autodep = TRUE
+)
+
+example <- heights %>%
+  filter(country == "Australia",
+         year >= 1910)
+```
+
+---
+
+# What is longitudinal data?
+
+- show a table growing row by row
+- unequal measurements
+
+---
+
+# What is longitudinal data?
+
+show plot
+--
+
+```{r gg-example, echo = FALSE}
+ggplot(example,
+       aes(x = year,
+           y = height_cm)) + 
+  geom_point() + 
+  geom_line()
+```
+
+---
+
+# What is longitudinal data?
+
+- AKA: "Panel Data" ...,
+
+---
+
+# Now let's add a few more countries
+
+---
+
+# And then a few more...
+
+---
+
+# And all of them?
+
+- watch all of the data get added
+
+---
+
+# We are now in spaghetti Territory!
+
+---
+
+# What do we do?
+
+- plot a sample with `facet_sample()`
+
+---
+
+# What do we want to answer?
+
+---
+class: inverse
+
+# Understanding features of your data
+
+## And their role in exploring data
+
+---
+
+# step one: Identifying features means summarising data down to one observation
+
+---
+
+# Step two: Identify which of these features are important / you care about / how to filter 
+
+---
+
+# Step three: You then need to 
+
+---
+
+# Who changes the most?
+
+- use `key_slope`
+- 
+
+---
+
+
+
+---
+
+
+# Other example plots
+
+```{r}
+heights %>%
+  features(height_cm, feat_ranges) %>%
+  keys_near(key = country,
+            var = range_diff) %>%
+  left_join(heights) %>%
+  ggplot(aes(x = range_diff,
+             y = reorder(country, range_diff))) + 
+  geom_point()
+```
+
+
+
+
+---
