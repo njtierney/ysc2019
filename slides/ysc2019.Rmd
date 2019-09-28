@@ -2,7 +2,7 @@
 title: "Making better spaghetti (plots)"
 subtitle: "Exploring the individuals in longitudinal data with the brolgar package"  
 author: "<span style = 'font-size: 90%;'>Nicholas Tierney, Monash University</span>"
-date: "<span style = 'font-size: 90%;'>YSC, Canerra <br><br> Tuesday 2nd October, 2019 </span><br><br> `r icon::fa('link')` [bit.ly/ysc-njt](https://bit.ly/ysc-njt)<br><br>`r icon::fa('twitter')` [nj_tierney](https://twitter.com/nj_tierney)"
+date: "<span style = 'font-size: 90%;'>YSC, Canberra <br><br> Tuesday 2nd October, 2019 </span><br><br> `r icon::fa('link')` [bit.ly/ysc-njt](https://bit.ly/ysc-njt)<br><br>`r icon::fa('twitter')` [nj_tierney](https://twitter.com/nj_tierney)"
 output:
   xaringan::moon_reader:
     lib_dir: libs
@@ -19,24 +19,71 @@ layout: true
 <div class="my-footer"><span>bit.ly/ysc-njt • @nj_tierney</span></div> 
 
 ```{r setup, include=FALSE}
-options(htmltools.dir.version = FALSE)
+options(htmltools.dir.version = FALSE, width = 120)
 # NOTE TO SELF: The CSS styles were created in `create-njt-theme.R`
 library(brolgar)
 library(tidyverse)
 library(visdat)
 library(naniar)
 library(gganimate)
+library(knitr)
 
-knitr::opts_chunk$set(
-  fig.width = 8,
-  fig.height = 4,
-  fig.retina = 3,
+opts_chunk$set(
+  fig.path = "figures/",
+  cache.path = "cache/",
   fig.align = "center",
-  out.width = "90%",
+  fig.width = 13,
+  fig.height = 6,
+  fig.retina = 3,
+  fig.show = "hold",
+  external = TRUE,
+  # dev = "svglite",
+  # dev.args = list(bg = "transparent"),
   message = FALSE,
   warning = FALSE,
   cache = TRUE,
+  echo = FALSE,
   autodep = TRUE
+)
+
+mp4_vid <- function(src){
+  HTML(
+    paste0(
+      '<video autoplay>
+        <source src="', src, '" type="video/mp4">
+      </video>'
+    )
+  )
+}
+
+# hook_output <- knit_hooks$get("output")
+# knit_hooks$set(output = function(x, options) {
+#    lines <- options$output.lines
+#    if (is.null(lines)) {
+#      return(hook_output(x, options))  # pass to default hook
+#    }
+#    x <- unlist(strsplit(x, "\n"))
+#    more <- "..."
+#    if (length(lines)==1) {        # first n lines
+#      if (length(x) > lines) {
+#        # truncate the output, but add ....
+#        x <- c(head(x, lines), more)
+#      }
+#    } else {
+#      x <- c(more, x[lines], more)
+#    }
+#    # paste these lines together
+#    x <- paste(c(x, ""), collapse = "\n")
+#    hook_output(x, options)
+#  })
+
+theme_set(
+  theme_grey(base_size = 16) +
+  theme(
+    legend.position = "bottom",
+    plot.background = element_rect(fill = "transparent"),
+    legend.background = element_rect(fill = "transparent")
+  )
 )
 
 example <- heights %>%
@@ -44,21 +91,88 @@ example <- heights %>%
          year >= 1910)
 ```
 
+```{r fun-heights-appear}
+anim_height_appear <- function(){
+  anim <- ggplot(heights,
+                 aes(x = year,
+                     y = height_cm,
+                     group = country)) + 
+    geom_line() + 
+    transition_manual(country, cumulative = TRUE) + 
+    ease_aes("exponential")
+  
+  animate(anim, fps = 24)
+}
+```
+
+```{r fun-height-reveal}
+anim_height_reveal <- function(){
+p <- ggplot(example, 
+            aes(x = year, 
+                y = height_cm)) + 
+  geom_line() + 
+  geom_point(colour = "red", size = 2) + 
+  geom_point(aes(group = seq_along(year))) + 
+  transition_reveal(year) + 
+  ease_aes('cubic-in-out')
+
+animate(p, fps = 24)
+}
+```
+
+
 ---
 
 # What is longitudinal data?
 
-- show a table growing row by row
-- unequal measurements
+```{r example-1}
+example[1,]
+```
 
 ---
 
 # What is longitudinal data?
 
-show plot
+```{r example-2}
+example[1:2,]
+```
+
+---
+
+# What is longitudinal data?
+
+```{r example-3}
+example[1:3,]
+```
+
+---
+
+# What is longitudinal data?
+
+```{r example-4}
+example[1:4,]
+```
+
+---
+class: inverse, middle
+# What is longitudinal data?
+
 --
 
-```{r gg-example, echo = FALSE}
+.huge[
+> Something observed sequentially over time
+]
+
+---
+
+```{r reveal-height}
+anim_height_reveal()
+```
+
+
+---
+
+```{r gg-example}
 ggplot(example,
        aes(x = year,
            y = height_cm)) + 
@@ -76,19 +190,126 @@ ggplot(example,
 
 # Now let's add a few more countries
 
+```{r gg-show-a-few-countries}
+heights %>%
+  filter(country %in% c("Australia",
+                        "New Zealand")) %>%
+ggplot(aes(x = year,
+           y = height_cm,
+           group = country)) + 
+  geom_point() + 
+  geom_line()
+```
+
+
 ---
 
 # And then a few more...
+
+```{r}
+heights %>%
+  filter(country %in% c("Australia",
+                        "Afganistan",
+                        "Albania",
+                        "New Zealand")) %>%
+ggplot(aes(x = year,
+           y = height_cm,
+           group = country)) + 
+  geom_point() + 
+  geom_line()
+```
 
 ---
 
 # And all of them?
 
-- watch all of the data get added
+```{r animate-all-data}
+anim_height_appear()
+```
+
 
 ---
 
 # We are now in spaghetti Territory!
+
+---
+class: inverse, middle, center
+
+# Problem: you just want to look at **some** of the data
+
+--
+
+# solutions?
+
+---
+
+# The `filter` solution
+
+---
+
+# The `filter` solution (fails n >= 5)
+
+---
+
+# The `sample` solution
+
+---
+
+# The `sample` solution (you need to know data structure)
+
+---
+class: inverse, middle, center
+
+# What **IS** the structure?
+
+
+---
+class: inverse, middle, center
+
+# What **IS** longitudinal data?
+
+--
+
+> Something observed sequentially over time
+
+---
+class: inverse, middle, center
+
+# What **IS** longitudinal data?
+
+--
+
+> ~~Something~~ **Anything that is** observed sequentially over time **is a time series**
+
+--
+
+[-- Rob Hyndman and George Athanasopolous](https://otexts.com/fpp2/data-methods.html)
+
+
+---
+
+# (Longitudinal) time series
+
+```{r tsibble-hex, fig.align = "center", out.width = "15%", echo = FALSE}
+include_graphics("https://tsibble.tidyverts.org/reference/figures/logo.png")
+```
+
+
+```{r show-tsibble-creation, echo = TRUE, eval = FALSE}
+heights <- as_tsibble(heights,
+                      index = year,
+                      key = country,
+                      regular = FALSE) #<<
+```
+
+1. **index**: Your time variable
+2. **key**: Variable(s) defining individual groups (or series)
+
+`1. +  2.` determine distinct rows in a tsibble.
+
+(From Earo Wang's talk: [Melt the clock](https://slides.earo.me/rstudioconf19/#8))
+
+
 
 ---
 
@@ -147,6 +368,9 @@ heights %>%
 ```
 
 
+---
 
 
 ---
+
+# Learn more
