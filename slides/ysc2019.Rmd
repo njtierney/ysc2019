@@ -2,11 +2,11 @@
 title: "Making better spaghetti (plots)"
 subtitle: "Exploring the individuals in longitudinal data with the brolgar package"  
 author: "<span style = 'font-size: 90%;'>Nicholas Tierney, Monash University</span>"
-date: "<span style = 'font-size: 90%;'>YSC, Canberra <br><br> Tuesday 2nd October, 2019 </span><br><br> `r icon::fa('link')` [bit.ly/ysc-njt](https://bit.ly/ysc-njt)<br><br>`r icon::fa('twitter')` [nj_tierney](https://twitter.com/nj_tierney)"
+date: "<span style = 'font-size: 90%;'>YSC, Canberra <br><br> Wednesday 2nd October, 2019 </span><br><br> `r icon::fa('link')` [bit.ly/ysc-njt](https://bit.ly/ysc-njt)<br><br>`r icon::fa('twitter')` [nj_tierney](https://twitter.com/nj_tierney)"
 output:
   xaringan::moon_reader:
     lib_dir: libs
-    css: [njtheme.css, extra.css]
+    css: [njtheme.css, extra.css, animate.css]
     nature:
       ratio: "16:9"
       titleSlideClass: ["left", "middle", "inverse"]
@@ -19,7 +19,7 @@ layout: true
 <div class="my-footer"><span>bit.ly/ysc-njt • @nj_tierney</span></div> 
 
 ```{r setup, include=FALSE}
-options(htmltools.dir.version = FALSE, width = 120)
+# options(htmltools.dir.version = FALSE, width = 120)
 # NOTE TO SELF: The CSS styles were created in `create-njt-theme.R`
 library(brolgar)
 library(tidyverse)
@@ -56,6 +56,13 @@ mp4_vid <- function(src){
   )
 }
 
+fig.fullsize <- c(
+fig.height = 3.5, 
+  fig.width = 8, 
+  out.width = "150%"
+)
+
+
 # hook_output <- knit_hooks$get("output")
 # knit_hooks$set(output = function(x, options) {
 #    lines <- options$output.lines
@@ -89,6 +96,21 @@ theme_set(
 example <- heights %>%
   filter(country == "Australia",
          year >= 1910)
+
+# **ni**ck's **pa**lette
+nipa <- list(red = "#c03018",
+             orange = "#f0a800",
+             green = "#609048",
+             purple = "#484878",
+             light_purple = "#A3A3BB",
+             light_green = "#AFC7A3",
+             light_orange = "#F7D37F",
+             light_red = "#DF978B",
+             pale_purple = "#ECECF1",
+             pale_green = "#D7E3D1",
+             pale_orange = "#FBE9BF",
+             pale_red = "#EFCBC4")
+
 ```
 
 ```{r fun-heights-appear}
@@ -100,7 +122,6 @@ anim_height_appear <- function(){
     geom_line() + 
     transition_manual(country, cumulative = TRUE) + 
     ease_aes("exponential")
-  
   animate(anim, fps = 24)
 }
 ```
@@ -115,64 +136,86 @@ p <- ggplot(example,
   geom_point(aes(group = seq_along(year))) + 
   transition_reveal(year) + 
   ease_aes('cubic-in-out')
-
 animate(p, fps = 24)
+}
+```
+
+```{r fun-gg-heights}
+gg_heights <- function(data){  
+  ggplot(data, 
+         aes(x = year,
+             y = height_cm,
+             group = country)) + 
+  geom_line()
 }
 ```
 
 
 ---
+class: inverse, middle, animated, slideInRight
 
 # What is longitudinal data?
-
-```{r example-1}
-example[1,]
-```
-
----
-
-# What is longitudinal data?
-
-```{r example-2}
-example[1:2,]
-```
-
----
-
-# What is longitudinal data?
-
-```{r example-3}
-example[1:3,]
-```
-
----
-
-# What is longitudinal data?
-
-```{r example-4}
-example[1:4,]
-```
-
----
-class: inverse, middle
-# What is longitudinal data?
-
---
 
 .huge[
 > Something observed sequentially over time
 ]
 
+
+---
+
+# What is longitudinal data?
+
+.large[
+```{r example-1}
+example[1,]
+```
+]
+
+---
+
+# What is longitudinal data?
+
+.large[
+```{r example-2}
+example[1:2,]
+```
+]
+
+---
+
+# What is longitudinal data?
+
+.large[
+```{r example-3}
+example[1:3,]
+```
+]
+
+---
+
+# What is longitudinal data?
+
+.large[
+```{r example-4}
+example[1:4,]
+```
+]
+
+---
+class: center, middle, inverse
+
+# But we are **statisticians** - let's **visualise**
+
 ---
 
 ```{r reveal-height}
+
 anim_height_reveal()
 ```
 
-
 ---
 
-```{r gg-example}
+```{r gg-example, fig.fullsize}
 ggplot(example,
        aes(x = year,
            y = height_cm)) + 
@@ -182,117 +225,186 @@ ggplot(example,
 
 ---
 
-# What is longitudinal data?
+# All of Australia
 
-- AKA: "Panel Data" ...,
+```{r gg-all-australia}
+heights %>%
+  filter(country %in% c("Australia")) %>%
+  gg_heights() + 
+  lims(x = range(heights$year),
+       y = range(heights$height_cm))
+
+```
+
 
 ---
 
-# Now let's add a few more countries
+# ...And New Zealand
 
 ```{r gg-show-a-few-countries}
 heights %>%
   filter(country %in% c("Australia",
                         "New Zealand")) %>%
-ggplot(aes(x = year,
-           y = height_cm,
-           group = country)) + 
-  geom_point() + 
-  geom_line()
+gg_heights() + 
+  lims(x = range(heights$year),
+       y = range(heights$height_cm))
 ```
 
 
 ---
 
-# And then a few more...
+# ... And Afghanistan and Albania
 
-```{r}
+```{r sample-more-heights}
 heights %>%
   filter(country %in% c("Australia",
-                        "Afganistan",
+                        "Afghanistan",
                         "Albania",
                         "New Zealand")) %>%
-ggplot(aes(x = year,
-           y = height_cm,
-           group = country)) + 
-  geom_point() + 
-  geom_line()
+gg_heights() + 
+  lims(x = range(heights$year),
+       y = range(heights$height_cm))
 ```
 
 ---
 
-# And all of them?
+# And the rest?
 
 ```{r animate-all-data}
+
 anim_height_appear()
 ```
 
-
 ---
 
-# We are now in spaghetti Territory!
+# And the rest?
 
----
-class: inverse, middle, center
-
-# Problem: you just want to look at **some** of the data
-
---
-
-# solutions?
-
----
-
-# The `filter` solution
-
----
-
-# The `filter` solution (fails n >= 5)
-
----
-
-# The `sample` solution
-
----
-
-# The `sample` solution (you need to know data structure)
-
----
-class: inverse, middle, center
-
-# What **IS** the structure?
-
-
----
-class: inverse, middle, center
-
-# What **IS** longitudinal data?
-
---
-
-> Something observed sequentially over time
-
----
-class: inverse, middle, center
-
-# What **IS** longitudinal data?
-
---
-
-> ~~Something~~ **Anything that is** observed sequentially over time **is a time series**
-
---
-
-[-- Rob Hyndman and George Athanasopolous](https://otexts.com/fpp2/data-methods.html)
-
-
----
-
-# (Longitudinal) time series
-
-```{r tsibble-hex, fig.align = "center", out.width = "15%", echo = FALSE}
-include_graphics("https://tsibble.tidyverts.org/reference/figures/logo.png")
+```{r gg-show-all}
+ggplot(heights,
+       aes(x = year,
+           y = height_cm,
+           group = country)) + 
+  geom_line()
 ```
+
+---
+
+# Does transparency help?
+
+```{r gg-show-all-w-alpha}
+ggplot(heights,
+       aes(x = year,
+           y = height_cm,
+           group = country)) + 
+  geom_line(alpha = 0.2) 
+```
+
+---
+
+# Does transparency + a model help?
+
+```{r gg-show-all-w-model}
+ggplot(heights,
+       aes(x = year,
+           y = height_cm)) + 
+  geom_line(alpha = 0.2,
+            aes(group = country)) + 
+  geom_smooth(method = "lm")
+```
+
+---
+class: inverse, middle, center
+
+.vhuge[
+I've got ~~99 problems~~ **153 countries** but I can't see **anything**
+]
+
+---
+class: middle, center
+
+<iframe width="1120" height="630" src="https://www.youtube.com/embed/UerBCXHKJ5s?start=15" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+---
+class: inverse, middle, center
+
+.huge[
+Problem #1: How do I look at **some** of the data?
+]
+
+--
+
+.huge[
+Problem #2: How do I find **interesting** observations?
+]
+
+
+---
+
+# Introducing `brolgar`:
+
+.pull-left.large[
+* **br**owsing
+* **o**ver
+* **l**ongitudinal data 
+* **g**raphically, and
+* **a**nalytically, in
+* **r**
+]
+
+.pull-right[
+```{r show-brolgar}
+include_graphics("https://njtierney.updog.co/img/brolga-bird.jpg")
+```
+
+]
+
+???
+
+* It's a crane, it fishes, and it's a native Australian bird
+
+
+---
+
+```{r gg-remind-spaghetti, fig.width = 8, fig.height = 4, out.width = "200%"}
+gg_heights(heights) + 
+  labs(title = "Remember, this is a spaghetti plot",
+       subtitle = "This plot is the problem we are trying to solve")
+```
+
+---
+class: inverse, middle, center
+
+# Before we go any further, we need to talk about longitudinal data
+
+
+---
+class: inverse, middle, center
+
+# What is longitudinal data?
+
+.vlarge[
+> Something observed sequentially over time
+]
+---
+class: inverse, middle, center
+
+# What is longitudinal data?
+
+
+.vlarge[
+> ~~Something~~ **Anything that is** observed sequentially over time **is a time series**
+]
+
+--
+
+.large[
+[-- Rob Hyndman and George Athanasopolous,
+Forecasting: Principles and Practice](https://otexts.com/fpp2/data-methods.html)
+]
+
+---
+
+# Longitudinal data as a time series <img src="https://tsibble.tidyverts.org/reference/figures/logo.png" align="right" height=140/>
 
 
 ```{r show-tsibble-creation, echo = TRUE, eval = FALSE}
@@ -310,19 +422,150 @@ heights <- as_tsibble(heights,
 (From Earo Wang's talk: [Melt the clock](https://slides.earo.me/rstudioconf19/#8))
 
 
+---
+
+
+```{r show-heights}
+heights
+```
+
+---
+class: inverse, middle, center
+
+.huge[
+Remember: 
+
+**key**  = variable(s) defining individual groups (or series)
+]
 
 ---
 
-# What do we do?
+# `sample_n_keys()` to sample ... **keys**
 
-- plot a sample with `facet_sample()`
+```{r show-sample-keys, echo = TRUE}
+heights %>% sample_n_keys(5)
+```
 
 ---
 
-# What do we want to answer?
+# `sample_n_keys()` to sample ... **keys**
+
+```{r ggplot-sample-keys}
+heights %>%
+  sample_n_keys(5) %>% 
+  gg_heights()
+```
+
+---
+
+# `facet_sample()`: See more individuals
+
+```{r gg-facet-sample, echo = TRUE, eval = FALSE}
+ggplot(heights,
+       aes(x = year,
+             y = height_cm,
+             group = country)) + 
+  geom_line() + 
+  facet_sample() #<<
+```
+
+---
+
+# `facet_sample()`: See more individuals
+
+```{r print-gg-facet-sample, ref.label='gg-facet-sample'}
+```
+
+---
+
+# `facet_strata()`: See all individuals
+
+```{r gg-facet-strata, echo = TRUE, eval = FALSE}
+ggplot(heights,
+       aes(x = year,
+             y = height_cm,
+             group = country)) + 
+  geom_line() + 
+  facet_strata() #<<
+```
+
+---
+
+# `facet_strata()`: See all individuals
+
+```{r print-gg-facet-strata, ref.label='gg-facet-strata'}
+```
+
+---
+
+# `facet_strata(along = -year)`: see all individuals **along** some variable
+
+```{r gg-facet-strata-along, echo = TRUE, eval = FALSE}
+ggplot(heights,
+       aes(x = year,
+             y = height_cm,
+             group = country)) + 
+  geom_line() + 
+  facet_strata(along = -year) #<<
+```
+
+---
+
+# `facet_strata(along = -year)`: see all individuals **along** some variable
+
+```{r print-gg-facet-strata-along, ref.label = "gg-facet-strata-along"}
+```
 
 ---
 class: inverse
+
+.middle.center[
+# Problem #1: How do I look at some of the data?
+]
+
+--
+
+.huge[
+`sample_n_keys()`
+`facet_sample()`
+`facet_strata()`
+]
+
+---
+class: inverse
+
+.middle.center[
+# ~~Problem #1: How do I look at some of the data?~~
+]
+
+.huge[
+`sample_n_keys()`
+`facet_sample()`
+`facet_strata()`
+]
+
+---
+class: inverse, middle, center
+
+## Problem #2: How do I find **interesting** observations?
+
+```{r}
+ggplot(heights,
+       aes(x = year,
+             y = height_cm,
+             group = country)) + 
+  geom_line()
+```
+
+---
+class: inverse, center, middle
+
+.huge[
+OK google: Define interesting
+]
+
+---
+class: inverse, center, middle
 
 # Understanding features of your data
 
@@ -330,47 +573,404 @@ class: inverse
 
 ---
 
-# step one: Identifying features means summarising data down to one observation
+## Identify features: summarise down to one observation
 
----
-
-# Step two: Identify which of these features are important / you care about / how to filter 
-
----
-
-# Step three: You then need to 
-
----
-
-# Who changes the most?
-
-- use `key_slope`
-- 
-
----
-
-
-
----
-
-
-# Other example plots
-
-```{r}
-heights %>%
-  features(height_cm, feat_ranges) %>%
-  keys_near(key = country,
-            var = range_diff) %>%
-  left_join(heights) %>%
-  ggplot(aes(x = range_diff,
-             y = reorder(country, range_diff))) + 
-  geom_point()
+```{r print-heights-for-features}
+heights
 ```
 
 
 ---
 
+## Identify features: summarise down to one observation
+
+```{r show-features, echo = TRUE}
+heights %>%
+  features(height_cm, max)
+```
 
 ---
 
-# Learn more
+## Identify features: summarise down to one observation
+
+```{r anim-line-flat}
+set.seed(2019-09-30-0012)
+heights_sub <- sample_n_keys(heights, size = 20)
+
+heights_feature <- heights_sub %>%
+  features(height_cm, max) %>%
+  mutate(year = max(heights_sub$year))
+
+heights_feature_flat <- heights_sub %>%
+  as_tibble() %>%
+  group_by(country) %>% 
+  mutate(height_cm = max(height_cm))
+
+heights_sub_flat_combine <- bind_rows(
+  regular = as_tibble(heights_sub),
+  flat = heights_feature_flat,
+  .id = "state"
+) %>%
+  mutate(state = factor(state, levels = c("regular", "flat")))
+
+library(gganimate)
+anim_flat <- ggplot(heights_sub_flat_combine,
+       aes(x = year,
+           y = height_cm,
+           group = country)) + 
+  geom_line() + 
+  transition_states(state)
+
+anim_flat
+
+```
+
+---
+
+## Identify features: summarise down to one observation
+
+```{r show-line-range}
+heights_feature_flat_point <- heights_feature_flat %>%
+  filter(year == max(year))
+
+ggplot(heights_feature_flat,
+       aes(x = year,
+           y = height_cm,
+           group = country)) + 
+  geom_line() + 
+  geom_point(data = heights_feature_flat_point,
+             aes(x = year,
+                 y = height_cm)) +
+  lims(y = range(heights_sub$height_cm))
+```
+
+---
+
+## Identify important features and decide how to filter 
+
+```{r gg-show-point}
+ggplot(heights_feature_flat_point,
+       aes(x = year,
+           y = height_cm)) +
+  geom_point() +
+  lims(y = range(heights_sub$height_cm),
+       x = range(heights_sub$year))
+```
+
+---
+
+## Identify important features and decide how to filter 
+
+```{r gg-show-red-points}
+min_max <- heights_feature_flat_point %>%
+  ungroup() %>%
+  filter(near_quantile(height_cm, c(0,1), 0.01)) 
+
+  ggplot(heights_feature_flat_point,
+         aes(x = year,
+             y = height_cm)) +
+  geom_point(data = min_max,
+             colour = "#c03018",
+             size = 6) +
+  geom_point() +
+  lims(y = range(heights_sub$height_cm),
+       x = range(heights_sub$year))
+```
+
+---
+
+## Identify important features and decide how to filter 
+
+```{r gg-just-red-points}
+ggplot(min_max,
+       aes(x = year,
+           y = height_cm,
+           group = country)) + 
+  geom_point(colour = nipa[["red"]],
+             size = 6) + 
+  geom_point() + 
+  lims(y = range(heights_sub$height_cm),
+       x = range(heights_sub$year))
+```
+
+
+---
+
+## Join this feature back to the data
+
+```{r gg-join-red}
+min_max_joined <- heights %>% filter(country %in% min_max$country)
+
+gg_join_red <- 
+ggplot(min_max,
+       aes(x = year,
+           y = height_cm,
+           group = country)) + 
+  geom_point(colour = nipa[["red"]],
+             size = 6) + 
+  geom_point() + 
+  geom_line(data = min_max_joined,
+            colour = nipa[["red"]]) + 
+  lims(y = range(heights_sub$height_cm),
+       x = range(heights_sub$year))
+
+gg_join_red
+```
+
+---
+
+## Join this feature back to the data
+
+```{r gg-join-red-show-all}
+gg_join_red_all <- 
+ggplot(min_max,
+       aes(x = year,
+           y = height_cm,
+           group = country)) + 
+  geom_point(colour = nipa[["red"]],
+             size = 6) + 
+  geom_point() + 
+  geom_line(data = heights_sub,
+            aes(x = year,
+                y = height_cm),
+            alpha = 0.5) +
+  geom_line(data = min_max_joined,
+            colour = nipa[["red"]]) + 
+  lims(y = range(heights_sub$height_cm),
+       x = range(heights_sub$year))
+
+gg_join_red_all
+```
+
+---
+
+## `r emo::ji("tada")` Countries with smallest and largest max height
+
+```{r show-red-all-again}
+gg_join_red_all
+```
+
+---
+class: inverse, middle, cetner
+
+# Let's see that **one more time**, but now with the data alongside:
+
+---
+
+## Identify features: summarise down to one observation
+
+---
+
+## Identify important features and decide how to filter 
+
+---
+
+## Identify important features and decide how to filter 
+
+```{r show-red-points, echo  = TRUE}
+heights_feature_flat_point %>%
+  ungroup() %>%
+  filter(near_quantile(height_cm, c(0,1), 0.01)) 
+```
+
+---
+
+## Identify important features and decide how to filter 
+
+---
+
+## Join this feature back to the data
+
+---
+
+## Join this feature back to the data
+
+---
+
+## Some alternative
+
+---
+
+```{r features-feat-ranges, echo = TRUE}
+heights %>%
+  features(height_cm, feat_ranges)
+```
+
+---
+
+```{r features-feat-monotonic, echo = TRUE}
+heights %>%
+  features(height_cm, feat_monotonic)
+```
+
+---
+
+```{r features-feat-spread, echo = TRUE}
+heights %>%
+  features(height_cm, feat_spread)
+```
+
+
+---
+class: inverse, center, middle
+
+# Big ideas
+
+---
+
+# Big ideas
+
+.vlarge[
+1. Longitudinal data is a time series
+1. Summaries are features
+3. reconnect summaries to data
+]
+
+
+---
+
+# quick reference
+
+- `facet_sample()` to look at a sample
+- `facet_strata()` to facet over all data
+- `features()` to calculate features of data
+- `keys_near()` to find keys near statistics
+
+---
+
+.vlarge[
+`r icon::fa_twitter()` nj_tierney
+
+`r icon::fa_github()` njtierney
+
+`r icon::fa_globe()` [brolgar.njtierney.com](http://brolgar.njtierney.com/)
+
+`r icon::fa_paper_plane()` nicholas.tierney@gmail.com
+]
+
+---
+
+.vhuge[
+bonus round
+`r emo::ji("tada")` `r emo::ji("dancer")` `r emo::ji("tada")`
+]
+ 
+---
+class: inverse, middle, center
+
+# Example: What is the growth of countries like?
+
+---
+
+# `key_slope`: Fit a linear model to each key
+
+```{r heights-slope, echo = TRUE}
+heights_slope <- key_slope(heights, height_cm ~ year)
+heights_slope
+```
+
+---
+
+# Who is similar to the summary?
+
+```{r summary-slope, echo = TRUE}
+summary(heights_slope$.slope_year)
+```
+
+--
+
+.vlarge[
+which keys are **nearest** to the summary statistics of the slope?
+]
+
+---
+
+# `keys_near()`
+
+```{r show-keys-near, echo = TRUE}
+heights_slope_near <- heights_slope %>%
+  keys_near(key = country,
+            var = .slope_year)
+```
+
+---
+
+# `keys_near()`
+
+```{r print-keys-near}
+heights_slope_near
+```
+
+---
+
+# Join back to data
+
+```{r join-near-back, echo = TRUE}
+heights_near <- heights_slope_near %>% 
+  left_join(heights, by = "country") 
+
+heights_near
+```
+
+
+---
+
+```{r show-palap}
+library(palap)
+heights_near <- heights_slope_near %>% left_join(heights, by = "country") 
+plot_summaries <- 
+  ggplot(heights_near, aes(x = year,
+             y = height_cm,
+             group = country,
+             colour = stat)) + 
+  geom_line() + 
+  scale_colour_palap_d(palette = "devon", 
+                       begin = 0, 
+                       end = 0.5)
+
+plot_summaries
+```
+
+---
+
+```{r show-palap-label}
+plot_summaries + 
+  geom_label(data = heights_near %>%
+               group_by(country) %>%
+               filter(year == max(year)),
+             aes(label = country))
+```
+
+
+```{r filter-soln, echo = TRUE, eval = FALSE}
+heights %>%
+  filter(country %in% c("Australia",
+                        "Afghanistan",
+                        "Albania",
+                        "New Zealand")) %>%
+  ggplot(aes(x = year,
+             y = height_cm,
+             group = country)) +
+  geom_line()
+```
+
+# Problems with the `filter` solution 
+
+- Need to know what the identifying column is
+- Need to know the **levels** of the identifying column
+- Above about 5, and the plot becomes hard to understand
+- Fails n >= 5
+
+---
+
+# Problems with the `sample` solution
+
+```{r code-sample}
+heights_sample <- heights %>%
+  group_nest(country) %>%  #<<
+  sample_n(size = 5) %>%
+  unnest() 
+```
+
+- Need to know data structure each time
+- Need to repeat 
