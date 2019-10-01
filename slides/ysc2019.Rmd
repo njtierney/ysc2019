@@ -1,6 +1,6 @@
 ---
 title: "Making better spaghetti (plots)"
-subtitle: "Exploring the individuals in longitudinal data with the brolgar package"  
+subtitle: "Exploring the individuals in longitudinal data with the `brolgar` package"  
 author: "<span style = 'font-size: 90%;'>Nicholas Tierney, Monash University</span>"
 date: "<span style = 'font-size: 90%;'>YSC, Canberra <br><br> Wednesday 2nd October, 2019 </span><br><br> `r icon::fa('link')` [bit.ly/ysc-njt](https://bit.ly/ysc-njt)<br><br>`r icon::fa('twitter')` [nj_tierney](https://twitter.com/nj_tierney)"
 output:
@@ -371,11 +371,6 @@ gg_heights(heights) +
        subtitle = "This plot is the problem we are trying to solve")
 ```
 
----
-class: inverse, middle, center
-
-# Before we go any further, we need to talk about longitudinal data
-
 
 ---
 class: inverse, middle, center
@@ -424,10 +419,11 @@ heights <- as_tsibble(heights,
 
 ---
 
-
+.large[
 ```{r show-heights}
-heights
+print(heights, n = 6)
 ```
+]
 
 ---
 class: inverse, middle, center
@@ -442,8 +438,11 @@ Remember:
 
 # `sample_n_keys()` to sample ... **keys**
 
-```{r show-sample-keys, echo = TRUE}
+```{r show-sample-keys, echo = TRUE, eval = FALSE}
 heights %>% sample_n_keys(5)
+```
+```{r print-show-sample-keys}
+heights %>% sample_n_keys(5) %>% print(n = 7)
 ```
 
 ---
@@ -454,6 +453,18 @@ heights %>% sample_n_keys(5)
 heights %>%
   sample_n_keys(5) %>% 
   gg_heights()
+```
+
+---
+
+# `facet_sample()`: See more individuals
+
+```{r gg-facet-sample-all, echo = TRUE, eval = FALSE}
+ggplot(heights,
+       aes(x = year,
+           y = height_cm,
+           group = country)) + 
+  geom_line() 
 ```
 
 ---
@@ -561,15 +572,8 @@ ggplot(heights,
 class: inverse, center, middle
 
 .huge[
-OK google: Define interesting
+Define interesting?
 ]
-
----
-class: inverse, center, middle
-
-# Understanding features of your data
-
-## And their role in exploring data
 
 ---
 
@@ -584,10 +588,19 @@ heights
 
 ## Identify features: summarise down to one observation
 
-```{r show-features, echo = TRUE}
+```{r show-features, echo = TRUE, eval = FALSE}
 heights %>%
-  features(height_cm, max)
+  features(height_cm, 
+           feat_five_num) #<<
 ```
+
+```{r print-features}
+heights %>%
+  features(height_cm, 
+           feat_five_num) %>%
+  print(n = 7)
+```
+
 
 ---
 
@@ -822,8 +835,8 @@ class: inverse, center, middle
 
 .vlarge[
 1. Longitudinal data is a time series
-1. Summaries are features
-3. reconnect summaries to data
+1. 
+3. Reconnect summaries to data
 ]
 
 
@@ -831,12 +844,25 @@ class: inverse, center, middle
 
 # quick reference
 
+- `sample_n_keys()`
 - `facet_sample()` to look at a sample
 - `facet_strata()` to facet over all data
 - `features()` to calculate features of data
-- `keys_near()` to find keys near statistics
 
 ---
+
+# Thanks
+
+- Di Cook
+- Tania Prvan
+- Stuart Lee
+- Mitchell O'Hara Wild
+- Earo Wang
+- Rob Hyndman
+
+---
+
+# Learn more 
 
 .vlarge[
 `r icon::fa_twitter()` nj_tierney
