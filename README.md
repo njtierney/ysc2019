@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![Netlify
+Status](https://api.netlify.com/api/v1/badges/bed2bc74-4da5-4510-92d8-d807b55a04db/deploy-status)](https://app.netlify.com/sites/confident-khorana-27cfd6/deploys)
 <!-- badges: end -->
 
 # Learn more at [brolgar.njtierney.com](http://brolgar.njtierney.com/)
