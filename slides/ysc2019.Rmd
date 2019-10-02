@@ -572,12 +572,6 @@ ggplot(heights,
 
 ]
 
----
-
-```{r show-doggo, out.width = "50%"}
-include_graphics("gifs/dog-solve-problem.gif")
-```
-
 
 ---
 
@@ -1073,3 +1067,8 @@ plot_summaries +
 .vhuge[
 **End.**
 ]
+---
+
+```{r show-doggo, out.width = "50%"}
+include_graphics("gifs/dog-solve-problem.gif")
+```
