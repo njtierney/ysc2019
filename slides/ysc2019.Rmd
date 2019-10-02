@@ -362,9 +362,9 @@ Problem #2: How do I find **interesting** observations?
 
 .pull-right[
 ```{r show-brolgar}
-include_graphics("https://njtierney.updog.co/img/brolga-bird.jpg")
+include_graphics("imgs/brolga-bird.jpg")
 ```
-
+**
 ]
 
 ???
@@ -1070,6 +1070,6 @@ plot_summaries +
 
 ---
 
-.vvhuge[
+.vhuge[
 **End.**
 ]
