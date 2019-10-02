@@ -56,7 +56,7 @@ h1, h2, h3 {
 }
 .remark-inline-code {
   font-size: 1em;
-  color: #c03018;
+  color: #f0a800;
   
   
 }
@@ -65,7 +65,8 @@ h1, h2, h3 {
   opacity: 1;
   font-size: 0.7em;
 }
-strong{color:#c03018;}
+/*strong{color:#F7D37F;}*/
+strong{color:#f0a800;}
 a, a > code {
   color: #609048;
   text-decoration: none;
