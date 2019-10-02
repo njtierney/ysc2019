@@ -56,10 +56,7 @@ mp4_vid <- function(src){
   )
 }
 
-fig.fullsize <- c(
-fig.height = 3.5, 
-  fig.width = 8, 
-  out.width = "150%"
+fig.fullsize <- c(fig.height = 3.5, fig.width = 8, out.width = "150%"
 )
 
 
@@ -212,14 +209,14 @@ let's **visualise**
 
 ---
 
-```{r reveal-height, fig.fullsize}
+```{r reveal-height, fig.height = 3.5, fig.width = 8, out.width = "150%"}
 
 anim_height_reveal()
 ```
 
 ---
 
-```{r gg-example, fig.fullsize}
+```{r gg-example, fig.height = 3.5, fig.width = 8, out.width = "150%"}
 ggplot(example,
        aes(x = year,
            y = height_cm)) + 
