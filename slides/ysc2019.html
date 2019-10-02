@@ -14,7 +14,7 @@
 class: left, middle, inverse, title-slide
 
 # Making better spaghetti (plots)
-## Exploring the individuals in longitudinal data with the brolgar package
+## Exploring the individuals in longitudinal data with the <code>brolgar</code> package
 ### <span style="font-size: 90%;">Nicholas Tierney, Monash University</span>
 ### <span style="font-size: 90%;">YSC, Canberra <br><br> Wednesday 2nd October, 2019 </span><br><br> <i class="fas  fa-link "></i> <a href="https://bit.ly/ysc-njt">bit.ly/ysc-njt</a><br><br><i class="fab  fa-twitter "></i> <a href="https://twitter.com/nj_tierney">nj_tierney</a>
 
@@ -34,7 +34,7 @@ layout: true
 
 
 ---
-class: inverse, middle, animated, slideInRight
+class: inverse, middle,
 
 # What is longitudinal data?
 
@@ -112,11 +112,15 @@ class: inverse, middle, animated, slideInRight
 ---
 class: center, middle, inverse
 
-# But we are **statisticians** - let's **visualise**
+.huge[
+But we are **statisticians**:
+
+let's **visualise**
+]
 
 ---
 
-&lt;img src="figures/reveal-height-1.gif" style="display: block; margin: auto;" /&gt;
+&lt;img src="figures/reveal-height, fig.fullsize-1.gif" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -153,6 +157,12 @@ class: center, middle, inverse
 # And the rest?
 
 &lt;img src="figures/gg-show-all-1.png" width="936" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+&lt;img src="gifs/noodle-explode.gif" width="50%" style="display: block; margin: auto;" /&gt;
+
 
 ---
 
@@ -218,11 +228,6 @@ Problem #2: How do I find **interesting** observations?
 ---
 
 &lt;img src="figures/gg-remind-spaghetti-1.png" width="200%" style="display: block; margin: auto;" /&gt;
-
----
-class: inverse, middle, center
-
-# Before we go any further, we need to talk about longitudinal data
 
 
 ---
@@ -309,7 +314,7 @@ heights %&gt;% sample_n_keys(5)
 ```
 
 ```
-## # A tsibble: 46 x 4 [!]
+## # A tsibble: 24 x 4 [!]
 ## # Key:       country [5]
 ##   country  year height_cm continent
 ##   &lt;chr&gt;   &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;    
@@ -319,8 +324,7 @@ heights %&gt;% sample_n_keys(5)
 ## 4 Eritrea  1950      157. Africa   
 ## 5 Eritrea  1960      156. Africa   
 ## 6 Eritrea  1970      156  Africa   
-## 7 Iraq     1880      168. Asia     
-## # … with 39 more rows
+## # … with 18 more rows
 ```
 
 ---
@@ -335,12 +339,13 @@ heights %&gt;% sample_n_keys(5)
 
 
 ```r
-ggplot(heights,
-       aes(x = year,
-             y = height_cm,
-             group = country)) + 
+ggplot(heights, aes(x = year, 
+                    y = height_cm, 
+                    group = country)) + 
   geom_line() 
 ```
+
+&lt;img src="figures/gg-facet-sample-all-1.png" width="60%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -384,7 +389,7 @@ ggplot(heights,
 
 ---
 
-# `facet_strata(along = -year)`: see all individuals **along** some variable
+## `facet_strata(along = -year)`: see all individuals **along** some variable
 
 
 ```r
@@ -398,44 +403,54 @@ ggplot(heights,
 
 ---
 
-# `facet_strata(along = -year)`: see all individuals **along** some variable
+## `facet_strata(along = -year)`: see all individuals **along** some variable
 
 &lt;img src="figures/print-gg-facet-strata-along-1.png" width="936" style="display: block; margin: auto;" /&gt;
 
 ---
-class: inverse
 
-.middle.center[
-# Problem #1: How do I look at some of the data?
-]
+## Problem #1: How do I look at some of the data?
 
 --
 
-.huge[
+.large[
+
+`as_tsibble()`
+
 `sample_n_keys()`
+
 `facet_sample()`
+
 `facet_strata()`
+
 ]
 
 ---
-class: inverse
 
-.middle.center[
-# ~~Problem #1: How do I look at some of the data?~~
-]
+## ~~Problem #1: How do I look at some of the data?~~
 
-.huge[
+.large[
+
+`as_tsibble()`
+
 `sample_n_keys()`
+
 `facet_sample()`
+
 `facet_strata()`
+
 ]
 
 ---
-class: inverse, middle, center
+
+&lt;img src="gifs/dog-solve-problem.gif" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+---
 
 ## Problem #2: How do I find **interesting** observations?
 
-&lt;img src="figures/unnamed-chunk-1-1.png" width="936" style="display: block; margin: auto;" /&gt;
+&lt;img src="figures/quote-interesting-obs-1.png" width="936" style="display: block; margin: auto;" /&gt;
 
 ---
 class: inverse, center, middle
@@ -444,48 +459,18 @@ class: inverse, center, middle
 Define interesting?
 ]
 
----
-class: inverse, center, middle
-
-# Understanding features of your data
-
-## And their role in exploring data
 
 ---
 
-## Identify features: summarise down to one observation
-
-
-```
-## # A tsibble: 1,499 x 4 [!]
-## # Key:       country [153]
-##    country      year height_cm continent
-##    &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;    
-##  1 Afghanistan  1870      168. Asia     
-##  2 Afghanistan  1880      166. Asia     
-##  3 Afghanistan  1930      167. Asia     
-##  4 Afghanistan  1990      167. Asia     
-##  5 Afghanistan  2000      161. Asia     
-##  6 Albania      1880      170. Europe   
-##  7 Albania      1890      170. Europe   
-##  8 Albania      1900      169. Europe   
-##  9 Albania      2000      168. Europe   
-## 10 Algeria      1910      169. Africa   
-## # … with 1,489 more rows
-```
-
-
----
-
-## Identify features: summarise down to one observation
+## Identify features: one per **key** &lt;img src="https://feasts.tidyverts.org/reference/figures/logo.png" align="right" height=140/&gt;
 
 
 ```r
 heights %&gt;%
-  features(height_cm, 
+* features(height_cm,
 *          feat_five_num)
 ```
-
+ 
 
 ```
 ## # A tibble: 153 x 6
@@ -497,8 +482,7 @@ heights %&gt;%
 ## 4 Angola       159.  160.  167.  168.  169.
 ## 5 Argentina    167.  168.  168.  170.  174.
 ## 6 Armenia      164.  166.  169.  172.  172.
-## 7 Australia    170   171.  172.  173.  178.
-## # … with 146 more rows
+## # … with 147 more rows
 ```
 
 
@@ -507,118 +491,17 @@ heights %&gt;%
 ## Identify features: summarise down to one observation
 
 
-```
-## 
-Frame 1 (1%)
-Frame 2 (2%)
-Frame 3 (3%)
-Frame 4 (4%)
-Frame 5 (5%)
-Frame 6 (6%)
-Frame 7 (7%)
-Frame 8 (8%)
-Frame 9 (9%)
-Frame 10 (10%)
-Frame 11 (11%)
-Frame 12 (12%)
-Frame 13 (13%)
-Frame 14 (14%)
-Frame 15 (15%)
-Frame 16 (16%)
-Frame 17 (17%)
-Frame 18 (18%)
-Frame 19 (19%)
-Frame 20 (20%)
-Frame 21 (21%)
-Frame 22 (22%)
-Frame 23 (23%)
-Frame 24 (24%)
-Frame 25 (25%)
-Frame 26 (26%)
-Frame 27 (27%)
-Frame 28 (28%)
-Frame 29 (29%)
-Frame 30 (30%)
-Frame 31 (31%)
-Frame 32 (32%)
-Frame 33 (33%)
-Frame 34 (34%)
-Frame 35 (35%)
-Frame 36 (36%)
-Frame 37 (37%)
-Frame 38 (38%)
-Frame 39 (39%)
-Frame 40 (40%)
-Frame 41 (41%)
-Frame 42 (42%)
-Frame 43 (43%)
-Frame 44 (44%)
-Frame 45 (45%)
-Frame 46 (46%)
-Frame 47 (47%)
-Frame 48 (48%)
-Frame 49 (49%)
-Frame 50 (50%)
-Frame 51 (51%)
-Frame 52 (52%)
-Frame 53 (53%)
-Frame 54 (54%)
-Frame 55 (55%)
-Frame 56 (56%)
-Frame 57 (57%)
-Frame 58 (58%)
-Frame 59 (59%)
-Frame 60 (60%)
-Frame 61 (61%)
-Frame 62 (62%)
-Frame 63 (63%)
-Frame 64 (64%)
-Frame 65 (65%)
-Frame 66 (66%)
-Frame 67 (67%)
-Frame 68 (68%)
-Frame 69 (69%)
-Frame 70 (70%)
-Frame 71 (71%)
-Frame 72 (72%)
-Frame 73 (73%)
-Frame 74 (74%)
-Frame 75 (75%)
-Frame 76 (76%)
-Frame 77 (77%)
-Frame 78 (78%)
-Frame 79 (79%)
-Frame 80 (80%)
-Frame 81 (81%)
-Frame 82 (82%)
-Frame 83 (83%)
-Frame 84 (84%)
-Frame 85 (85%)
-Frame 86 (86%)
-Frame 87 (87%)
-Frame 88 (88%)
-Frame 89 (89%)
-Frame 90 (90%)
-Frame 91 (91%)
-Frame 92 (92%)
-Frame 93 (93%)
-Frame 94 (94%)
-Frame 95 (95%)
-Frame 96 (96%)
-Frame 97 (97%)
-Frame 98 (98%)
-Frame 99 (99%)
-Frame 100 (100%)
-## Finalizing encoding... done!
-```
 
-&lt;img src="figures/anim-line-flat-1.gif" style="display: block; margin: auto;" /&gt;
+
+&lt;img src="figures/anim-line-flat-max-1.gif" style="display: block; margin: auto;" /&gt;
+
 
 ---
 
 ## Identify features: summarise down to one observation
 
-&lt;img src="figures/show-line-range-1.png" width="936" style="display: block; margin: auto;" /&gt;
+&lt;img src="figures/show-line-range-point-1.png" width="936" style="display: block; margin: auto;" /&gt;
+
 
 ---
 
@@ -660,15 +543,54 @@ Frame 100 (100%)
 ---
 class: inverse, middle, cetner
 
-# Let's see that **one more time**, but now with the data alongside:
+.vhuge[
+Let's see that **one more time**, but with the data
+]
 
 ---
 
 ## Identify features: summarise down to one observation
 
+
+```
+## # A tsibble: 1,499 x 4 [!]
+## # Key:       country [153]
+##    country      year height_cm continent
+##    &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;    
+##  1 Afghanistan  1870      168. Asia     
+##  2 Afghanistan  1880      166. Asia     
+##  3 Afghanistan  1930      167. Asia     
+##  4 Afghanistan  1990      167. Asia     
+##  5 Afghanistan  2000      161. Asia     
+##  6 Albania      1880      170. Europe   
+##  7 Albania      1890      170. Europe   
+##  8 Albania      1900      169. Europe   
+##  9 Albania      2000      168. Europe   
+## 10 Algeria      1910      169. Africa   
+## # … with 1,489 more rows
+```
+
 ---
 
-## Identify important features and decide how to filter 
+## Identify features: summarise down to one observation
+
+
+```
+## # A tibble: 153 x 6
+##    country       min   q25   med   q75   max
+##    &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Afghanistan  161.  164.  167.  168.  168.
+##  2 Albania      168.  168.  170.  170.  170.
+##  3 Algeria      166.  168.  169   170.  171.
+##  4 Angola       159.  160.  167.  168.  169.
+##  5 Argentina    167.  168.  168.  170.  174.
+##  6 Armenia      164.  166.  169.  172.  172.
+##  7 Australia    170   171.  172.  173.  178.
+##  8 Austria      162.  164.  167.  169.  179.
+##  9 Azerbaijan   170.  171.  172.  172.  172.
+## 10 Bahrain      161.  161.  164.  164.  164 
+## # … with 143 more rows
+```
 
 ---
 
@@ -676,36 +598,53 @@ class: inverse, middle, cetner
 
 
 ```r
-heights_feature_flat_point %&gt;%
-  ungroup() %&gt;%
-  filter(near_quantile(height_cm, c(0,1), 0.01)) 
+heights_five %&gt;% 
+  filter(max == max(max) | max == min(max))
 ```
 
 ```
-## # A tibble: 2 x 4
-##   country           year height_cm continent
-##   &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;    
-## 1 Netherlands       1980      183. Europe   
-## 2 Papua New Guinea  1980      161. Oceania
+## # A tibble: 2 x 6
+##   country            min   q25   med   q75   max
+##   &lt;chr&gt;            &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 Denmark           165.  168.  170.  178.  183.
+## 2 Papua New Guinea  152.  152.  156.  160.  161.
 ```
 
 ---
 
-## Identify important features and decide how to filter 
+## Join summaries back to data
+
+
+```r
+heights_five %&gt;% 
+  filter(max == max(max) | max == min(max)) %&gt;% 
+  left_join(heights, by = "country")
+```
+
+```
+## # A tibble: 21 x 9
+##    country   min   q25   med   q75   max  year height_cm continent
+##    &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;    
+##  1 Denmark  165.  168.  170.  178.  183.  1820      167. Europe   
+##  2 Denmark  165.  168.  170.  178.  183.  1830      165. Europe   
+##  3 Denmark  165.  168.  170.  178.  183.  1850      167. Europe   
+##  4 Denmark  165.  168.  170.  178.  183.  1860      168. Europe   
+##  5 Denmark  165.  168.  170.  178.  183.  1870      168. Europe   
+##  6 Denmark  165.  168.  170.  178.  183.  1880      170. Europe   
+##  7 Denmark  165.  168.  170.  178.  183.  1890      169. Europe   
+##  8 Denmark  165.  168.  170.  178.  183.  1900      170. Europe   
+##  9 Denmark  165.  168.  170.  178.  183.  1910      170  Europe   
+## 10 Denmark  165.  168.  170.  178.  183.  1920      174. Europe   
+## # … with 11 more rows
+```
+
+---
+class: middle, center
+# Other available `features()` in `brolgar` 
 
 ---
 
-## Join this feature back to the data
-
----
-
-## Join this feature back to the data
-
----
-
-## Some alternative
-
----
+# What is the range of the data? `feat_ranges`
 
 
 ```r
@@ -732,6 +671,8 @@ heights %&gt;%
 
 ---
 
+# Does my data only increase or decrease? `feat_monotonic`
+
 
 ```r
 heights %&gt;%
@@ -757,6 +698,8 @@ heights %&gt;%
 
 ---
 
+# What is the spread of my data? `feat_spread`
+
 
 ```r
 heights %&gt;%
@@ -780,52 +723,72 @@ heights %&gt;%
 ## # … with 143 more rows
 ```
 
-
----
-class: inverse, center, middle
-
-# Big ideas
-
 ---
 
-# Big ideas
+# Take homes
 
-.vlarge[
+.large[
 1. Longitudinal data is a time series
-1. Summaries are features
-3. reconnect summaries to data
+2. Specify structure once
+2. Use `facet_sample()` / `facet_strata()` to look at data
+1. Summarise with `features` to find interesting observations
+3. Reconnect summaries to data with a **left join**
 ]
-
-
----
-
-# quick reference
-
-- `facet_sample()` to look at a sample
-- `facet_strata()` to facet over all data
-- `features()` to calculate features of data
-- `keys_near()` to find keys near statistics
 
 ---
 
 # Thanks
 
+.large[
 - Di Cook
 - Tania Prvan
 - Stuart Lee
 - Mitchell O'Hara Wild
 - Earo Wang
+- Rob Hyndman
+- Miles McBain
+- Monash University
+]
 
 ---
 
-.vlarge[
+# Resources
+
+.large[
+- [feasts](http://feasts.tidyverts.org/)
+- [tsibble](http://tsibble.tidyverts.org/)
+- [Time series graphics using feasts](https://robjhyndman.com/hyndsight/feasts/)
+- [Feature-based time series analysis](https://robjhyndman.com/hyndsight/fbtsa/)
+]
+
+---
+
+# Colophon
+
+.large[
+- Slides made using [xaringan](https://github.com/yihui/xaringan)
+- Extended with [xaringanthemer](https://github.com/gadenbuie/xaringanthemer)
+- Colours taken + modified from [lorikeet theme from ochRe](https://github.com/ropenscilabs/ochRe)
+- Header font is **Josefin Sans**
+- Body text font is **Montserrat**
+- Code font is **Fira Mono**
+]
+
+---
+
+# Learning more
+
+.large[
+<i class="fas  fa-box-open "></i> [brolgar.njtierney.com](http://brolgar.njtierney.com/)
+
+<i class="fas  fa-link "></i> [bit.ly/ysc-njt](https://bit.ly/ysc-njt)
+
 <i class="fab  fa-twitter "></i> nj_tierney
 
 <i class="fab  fa-github "></i> njtierney
 
-<i class="fas  fa-globe "></i> [brolgar.njtierney.com](http://brolgar.njtierney.com/)
-
 <i class="fas  fa-paper-plane "></i> nicholas.tierney@gmail.com
+
 ]
 
 ---
@@ -834,6 +797,13 @@ class: inverse, center, middle
 bonus round
 🎉 💃 🎉
 ]
+ 
+---
+
+## Identify features: summarise down to one observation (variance)
+
+&lt;img src="figures/show-line-range-1.gif" style="display: block; margin: auto;" /&gt;
+
  
 ---
 class: inverse, middle, center
@@ -954,34 +924,11 @@ heights_near
 &lt;img src="figures/show-palap-label-1.png" width="936" style="display: block; margin: auto;" /&gt;
 
 
-
-```r
-heights %&gt;%
-  filter(country %in% c("Australia",
-                        "Afghanistan",
-                        "Albania",
-                        "New Zealand")) %&gt;%
-  ggplot(aes(x = year,
-             y = height_cm,
-             group = country)) +
-  geom_line()
-```
-
-# Problems with the `filter` solution 
-
-- Need to know what the identifying column is
-- Need to know the **levels** of the identifying column
-- Above about 5, and the plot becomes hard to understand
-- Fails n &gt;= 5
-
 ---
 
-# Problems with the `sample` solution
-
-
-
-- Need to know data structure each time
-- Need to repeat
+.vvhuge[
+**End.**
+]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
